@@ -26,13 +26,11 @@ import {
   listMantineComponents
 } from './documentation/tools.js';
 import { 
-  generateComponent,
-  generateAcademicComponent
+  generateComponent
 } from './component-generation/generator.js';
 import {
   generateTheme,
   generateComponentTheme,
-  generateAcademicTheme,
   generateCompleteTheme
 } from './theme-utils/theme-generator.js';
 import { ComponentGenerationConfig, ThemeConfig, ComponentThemeConfig } from './types/index.js';
@@ -147,37 +145,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         }
       },
       {
-        name: "generate_academic_component",
-        description: "Generate a component based on an academic template",
-        inputSchema: {
-          type: "object",
-          properties: {
-            name: {
-              type: "string",
-              description: "Name of the component to generate"
-            },
-            mantineComponent: {
-              type: "string",
-              description: "Mantine component to base on"
-            },
-            template: {
-              type: "string",
-              enum: ["publication", "research", "citation", "timeline"],
-              description: "Academic template to use"
-            },
-            props: {
-              type: "object",
-              description: "Additional props configuration"
-            },
-            styling: {
-              type: "object",
-              description: "Additional styling options"
-            }
-          },
-          required: ["name", "mantineComponent", "template"]
-        }
-      },
-      {
         name: "create_theme_config",
         description: "Create a Mantine theme configuration",
         inputSchema: {
@@ -237,14 +204,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             }
           },
           required: ["component"]
-        }
-      },
-      {
-        name: "create_academic_theme",
-        description: "Create an academic-focused theme configuration",
-        inputSchema: {
-          type: "object",
-          properties: {}
         }
       }
     ]
@@ -336,36 +295,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
         
-      case "generate_academic_component": {
-        const { name, mantineComponent, template, props, styling } = request.params.arguments as any;
-        
-        if (!name || !mantineComponent || !template) {
-          throw new McpError(
-            ErrorCode.InvalidParams, 
-            "Component name, Mantine component, and template are required"
-          );
-        }
-        
-        const config: ComponentGenerationConfig = {
-          name,
-          mantineComponent,
-          props,
-          styling
-        };
-        
-        const result = await generateAcademicComponent(config, template);
-        
-        return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({
-              files: result.files,
-              preview: result.content[`${config.name}.tsx`]
-            }, null, 2)
-          }]
-        };
-      }
-        
       case "create_theme_config": {
         const args = request.params.arguments as Record<string, any>;
         
@@ -406,17 +335,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
         
         const themeConfig = generateComponentTheme(config);
-        
-        return {
-          content: [{
-            type: "text",
-            text: JSON.stringify(themeConfig, null, 2)
-          }]
-        };
-      }
-        
-      case "create_academic_theme": {
-        const themeConfig = generateAcademicTheme();
         
         return {
           content: [{

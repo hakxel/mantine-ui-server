@@ -1,8 +1,8 @@
 {
-  "name": "mantine-ui-server",
+  "name": "@hakxel/mantine-ui-server",
   "version": "0.1.0",
-  "description": "A Model Context Protocol server",
-  "private": true,
+  "description": "MCP server for working with Mantine UI components - provides documentation, generation, and theme utilities",
+  "private": false,
   "type": "module",
   "bin": {
     "mantine-ui-server": "./build/index.js"
@@ -11,10 +11,11 @@
     "build"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "tsc && node scripts/chmod.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@mantine/core": "^7.17.3",
@@ -26,5 +27,24 @@
   "devDependencies": {
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "mantine",
+    "ui",
+    "components",
+    "mcp",
+    "claude",
+    "anthropic",
+    "mantine-ui",
+    "model-context-protocol"
+  ],
+  "author": "hakxel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hakxel/mantine-ui-server"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
